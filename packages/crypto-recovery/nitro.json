@@ -1,0 +1,31 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": [
+    "cryptorecovery"
+  ],
+  "ios": {
+    "iosModuleName": "CryptoRecovery"
+  },
+  "android": {
+    "androidNamespace": [
+      "cryptorecovery"
+    ],
+    "androidCxxLibName": "CryptoRecovery"
+  },
+  "autolinking": {
+    "CryptoRecovery": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridCryptoRecovery"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridCryptoRecovery"
+      }
+    }
+  },
+  "ignorePaths": [
+    "**/node_modules",
+    "build"
+  ]
+}

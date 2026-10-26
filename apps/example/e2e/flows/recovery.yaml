@@ -1,0 +1,85 @@
+# A wallet to the next phone and back: the published test phrase sealed in the vault (its first Ethereum address is
+# known, 0x9858EfFD…EcaEda94), backed up under a password into iCloud Keychain or Block Store, removed from the device
+# as if the phone were lost, then restored from the store with the password. The restored wallet has the same address:
+# the entropy went from the vault into the engine's seal, through the store, and back into the hardware.
+#
+# iOS: the runner presents a face to the simulator while the flow runs. Android: the wallet opens with the device
+# credential too, and steps/passcode.yaml types the emulator's PIN.
+appId: ${APP_ID}
+---
+- runFlow: steps/open.yaml
+- takeScreenshot: ${OUT}-01-empty
+
+- tapOn:
+    id: recovery-seal
+- runFlow:
+    file: steps/passcode.yaml
+    env:
+      PROMPT: Protect your wallet
+- extendedWaitUntil:
+    visible: Locked
+    timeout: 30000
+- tapOn:
+    id: recovery-unlock
+- runFlow:
+    file: steps/passcode.yaml
+    env:
+      PROMPT: Unlock your wallet
+- extendedWaitUntil:
+    visible: 0x9858Ef…aEda94
+    timeout: 60000
+
+- scrollUntilVisible:
+    element:
+      id: recovery-backup
+- runFlow:
+    file: steps/password.yaml
+    env:
+      FIELD: recovery-backup-password
+      PASSWORD: correct horse battery
+- tapOn:
+    id: recovery-backup
+- runFlow:
+    file: steps/passcode.yaml
+    env:
+      PROMPT: Back up your wallet
+- scrollUntilVisible:
+    element: 87 bytes, sealed
+    direction: UP
+    timeout: 60000
+- takeScreenshot: ${OUT}-02-backed-up
+
+- scrollUntilVisible:
+    element:
+      id: recovery-lose
+- tapOn:
+    id: recovery-lose
+- extendedWaitUntil:
+    visible:
+      id: recovery-restore
+    timeout: 30000
+- takeScreenshot: ${OUT}-03-lost
+- runFlow:
+    file: steps/password.yaml
+    env:
+      FIELD: recovery-restore-password
+      PASSWORD: correct horse battery
+- tapOn:
+    id: recovery-restore
+- runFlow:
+    file: steps/passcode.yaml
+    env:
+      PROMPT: Protect your wallet
+- extendedWaitUntil:
+    visible: Locked
+    timeout: 60000
+- tapOn:
+    id: recovery-unlock
+- runFlow:
+    file: steps/passcode.yaml
+    env:
+      PROMPT: Unlock your wallet
+- extendedWaitUntil:
+    visible: 0x9858Ef…aEda94
+    timeout: 60000
+- takeScreenshot: ${OUT}-04-restored

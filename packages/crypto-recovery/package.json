@@ -1,0 +1,88 @@
+{
+  "name": "@hzblj/crypto-recovery",
+  "version": "0.0.0",
+  "description": "A wallet's sealed backup kept in iCloud Keychain or Android's Block Store for React Native and Expo, end to end encrypted by the platform and opened only by its password: the store sees ciphertext, never a password or a secret.",
+  "author": "Jan Blazej",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hzblj/crypto-recovery.git",
+    "directory": "packages/crypto-recovery"
+  },
+  "bugs": {
+    "url": "https://github.com/hzblj/crypto-recovery/issues"
+  },
+  "homepage": "https://github.com/hzblj/crypto-recovery#readme",
+  "keywords": [
+    "backup",
+    "block-store",
+    "crypto",
+    "expo",
+    "icloud",
+    "icloud-keychain",
+    "keychain",
+    "nitro",
+    "react-native",
+    "recovery",
+    "wallet"
+  ],
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "android/build.gradle",
+    "android/CMakeLists.txt",
+    "android/gradle.properties",
+    "android/src/main/**",
+    "build",
+    "ios",
+    "nitro.json",
+    "nitrogen/generated/**",
+    "CryptoRecovery.podspec"
+  ],
+  "scripts": {
+    "build": "rm -rf build && tsc -p ./tsconfig.build.json",
+    "clean": "rm -rf build",
+    "codegen": "nitrogen --logLevel=warning",
+    "prepack": "yarn run -T turbo run build --filter=$npm_package_name...",
+    "lint": "yarn run -T concurrently \"yarn biome:check\" \"yarn tsc:check\"",
+    "lint:fix": "yarn run -T biome check --write .",
+    "biome:check": "yarn run -T biome check .",
+    "tsc:check": "tsc -p ./tsconfig.json",
+    "test": "node --conditions=source --import tsx --test 'test/**/*.test.ts'"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-nitro-modules": "^0.37.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "@types/react": "~19.2.14",
+    "nitrogen": "0.37.1",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-nitro-modules": "0.37.1",
+    "tsx": "^4.23.15",
+    "typescript": "~7.0.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./build/index.d.ts",
+        "default": "./build/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "provenance": true
+  }
+}

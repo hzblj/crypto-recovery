@@ -1,0 +1,47 @@
+# The shared prologue: the app on its recovery screen, with no wallet and no backup left by an earlier run (the
+# Keychain and Block Store outlive an app's data). A development build opens straight on the running Metro server; a
+# release build carries its bundle and just launches.
+appId: ${APP_ID}
+---
+- stopApp
+- runFlow:
+    when:
+      true: ${BUILD == 'release'}
+    commands:
+      - launchApp
+- runFlow:
+    when:
+      true: ${BUILD != 'release'}
+    commands:
+      - openLink: ${DEV_SERVER_LINK}
+      # Once per install, iOS asks whether the link may open the app, in the simulator's language.
+      - tapOn:
+          text: Open|Otevřít
+          optional: true
+- extendedWaitUntil:
+    visible:
+      id: recovery
+    timeout: 180000
+- runFlow:
+    when:
+      visible:
+        id: recovery-lose
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: recovery-lose
+      - tapOn:
+          id: recovery-lose
+- runFlow:
+    when:
+      visible:
+        id: recovery-forget
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: recovery-forget
+      - tapOn:
+          id: recovery-forget
+- extendedWaitUntil:
+    visible: None
+    timeout: 30000
