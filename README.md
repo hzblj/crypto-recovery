@@ -11,6 +11,7 @@ next phone finds them. The store sees ciphertext, never a password or a secret.
 <p>
   <img alt="The example on iOS: the wallet's sealed backup in iCloud Keychain, 87 bytes, and the wallet unlocked to its address" height="560" src="media/ios-recovery.png" />
   <img alt="After the phone is lost: the backup still in iCloud Keychain, restored with the password straight into this phone's hardware" height="560" src="media/ios-restore.png" />
+  <img alt="The same on the Android emulator: Block Store, which a phone set up from this one restores" height="560" src="media/android-recovery.png" />
 </p>
 
 ```sh
