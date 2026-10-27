@@ -1,6 +1,6 @@
 {
   "name": "@hzblj/crypto-recovery",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A wallet's sealed backup kept in iCloud Keychain or Android's Block Store for React Native and Expo, end to end encrypted by the platform and opened only by its password: the store sees ciphertext, never a password or a secret.",
   "author": "Jan Blazej",
   "license": "MIT",
