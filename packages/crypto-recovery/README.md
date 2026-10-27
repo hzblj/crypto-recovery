@@ -9,6 +9,11 @@ on iOS, Block Store on Android. It keeps what [`@hzblj/crypto-vault`](https://gi
 engine under a password, and hands it back on the next phone for `restore`. The store sees ciphertext: never a
 password, never a secret, and nothing that is not a sealed backup.
 
+<p>
+  <img alt="The example on iOS: the wallet's sealed backup in iCloud Keychain, 87 bytes, and the wallet unlocked to its address" height="560" src="https://raw.githubusercontent.com/hzblj/crypto-recovery/main/media/ios-recovery.png" />
+  <img alt="After the phone is lost: the backup still in iCloud Keychain, restored with the password straight into this phone's hardware" height="560" src="https://raw.githubusercontent.com/hzblj/crypto-recovery/main/media/ios-restore.png" />
+</p>
+
 ```sh
 npx expo install @hzblj/crypto-recovery react-native-nitro-modules
 ```

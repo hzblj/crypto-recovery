@@ -8,6 +8,11 @@ A wallet's sealed backup kept in iCloud Keychain or Android's Block Store, for R
 [`@hzblj/nitro-crypto`](https://github.com/hzblj/nitro-crypto) engine; this package keeps the sealed bytes where the
 next phone finds them. The store sees ciphertext, never a password or a secret.
 
+<p>
+  <img alt="The example on iOS: the wallet's sealed backup in iCloud Keychain, 87 bytes, and the wallet unlocked to its address" height="560" src="media/ios-recovery.png" />
+  <img alt="After the phone is lost: the backup still in iCloud Keychain, restored with the password straight into this phone's hardware" height="560" src="media/ios-restore.png" />
+</p>
+
 ```sh
 npx expo install @hzblj/crypto-recovery react-native-nitro-modules
 ```
