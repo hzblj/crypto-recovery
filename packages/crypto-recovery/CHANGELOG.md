@@ -1,5 +1,11 @@
 # @hzblj/crypto-recovery
 
+## 0.1.1
+
+### Patch Changes
+
+- [`e7c5536`](https://github.com/hzblj/crypto-recovery/commit/e7c5536deb8ac2bd0bc09d325d8b871f98d26616) Thanks [@hzblj](https://github.com/hzblj)! - The README shows the example app on iOS and Android.
+
 ## 0.1.0
 
 ### Minor Changes
