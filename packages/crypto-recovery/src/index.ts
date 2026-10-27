@@ -13,6 +13,6 @@ export const createRecovery = (): Recovery => {
 }
 
 export {isRecoveryError, RECOVERY_ERROR_CODES, RecoveryError, type RecoveryErrorCode} from './errors'
-export {isSealedBackup, type Recovery} from './recovery'
+export {type BackupKind, backupKind, isSealedBackup, type Recovery} from './recovery'
 export type {Reach, RecoveryStore} from './specs/crypto-recovery.nitro'
 export {VERSION} from './version'

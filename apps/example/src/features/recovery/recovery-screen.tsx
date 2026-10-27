@@ -1,10 +1,10 @@
-import {isRecoveryError, type Reach, type RecoveryStore} from '@hzblj/crypto-recovery'
+import {backupKind, isRecoveryError, type Reach, type RecoveryStore} from '@hzblj/crypto-recovery'
 import {isVaultError} from '@hzblj/crypto-vault'
 import {Button, Island, LabeledContent, RnText, TextField, VStack} from '@hzblj/kara-ui'
 import {useCallback, useEffect, useState} from 'react'
 
 import {Lead, Notice, Page, RowDivider, Rows, Section} from '../../components'
-import {ENTRY, exampleEngine} from '../../core/engine'
+import {ENTRY, exampleEngine, PASSKEY_DOMAIN} from '../../core/engine'
 
 const STORE: Record<RecoveryStore, string> = {
   'block-store': 'Block Store',
@@ -22,6 +22,9 @@ const ACCESS = 'biometrics-or-passcode'
 
 const PHRASE = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
 
+/** What the new passkey is called in the person's passwords app. */
+const PASSKEY_NAME = 'Recovery Example wallet'
+
 /** What went wrong, for a person: the packages' codes in words, anything else by its message. */
 const describe = (error: unknown) => {
   if (isVaultError(error)) {
@@ -36,9 +39,9 @@ const describe = (error: unknown) => {
 const short = (address: string) => `${address.slice(0, 8)}…${address.slice(-6)}`
 
 /**
- * A wallet's way to the next phone, end to end: sealed in the vault, backed up under a password (the engine's seal)
- * into iCloud Keychain or Block Store, removed from this device as if the phone were lost, then restored from the
- * store with the password into a new entry, whose address is the old one's.
+ * A wallet's way to the next phone, end to end: sealed in the vault, backed up under a password or a passkey (the
+ * engine's seal) into iCloud Keychain or Block Store, removed from this device as if the phone were lost, then restored
+ * from the store with what sealed it, which the backup's header says, into a new entry whose address is the old one's.
  */
 export const RecoveryScreen = () => {
   const engine = exampleEngine()
@@ -120,11 +123,20 @@ export const RecoveryScreen = () => {
       forgetPassword()
     })
 
+  const backUpWithPasskey = () =>
+    run(async () => {
+      const backup = await vault.backup(ENTRY, {passkey: {name: PASSKEY_NAME}, prompt: 'Back up your wallet'})
+      await recovery.save(ENTRY, backup)
+    })
+
   const restore = (backup: Uint8Array) =>
     run(async () => {
       await vault.restore(ENTRY, backup, {access: ACCESS, password})
       forgetPassword()
     })
+
+  const restoreWithPasskey = (backup: Uint8Array) =>
+    run(() => vault.restore(ENTRY, backup, {access: ACCESS, passkey: true}))
 
   // As if the phone were lost: the wallet goes from this device, the backup stays in the store.
   const lose = () => {
@@ -139,12 +151,14 @@ export const RecoveryScreen = () => {
 
   const sealed = vault.has(ENTRY)
   const storeName = STORE[recovery.store]
+  const passkeys = vault.passkeySupported && PASSKEY_DOMAIN !== undefined
+  const savedKind = saved ? backupKind(saved) : undefined
 
   return (
     <Page testID="recovery">
       <Lead>
-        A wallet sealed in the vault, backed up under a password into {storeName}, and restored from there on the next
-        phone. The store keeps only the engine's seal: without the password it opens nothing.
+        A wallet sealed in the vault, backed up under a password or a passkey into {storeName}, and restored from there
+        on the next phone. The store keeps only the engine's seal: without its password or passkey it opens nothing.
       </Lead>
 
       <Section title="This device">
@@ -158,6 +172,12 @@ export const RecoveryScreen = () => {
               label="Backup in the store"
               value={saved === undefined ? '…' : saved ? `${saved.length} bytes, sealed` : 'None'}
             />
+            {saved ? (
+              <>
+                <RowDivider />
+                <LabeledContent label="Opens with" value={savedKind === 'passkey' ? 'Its passkey' : 'Its password'} />
+              </>
+            ) : null}
           </Rows>
         </Island>
       </Section>
@@ -205,13 +225,46 @@ export const RecoveryScreen = () => {
             </Island>
           </Section>
 
+          <Section
+            caption={
+              PASSKEY_DOMAIN
+                ? `Or under a new passkey of ${PASSKEY_DOMAIN}: its PRF output seals the wallet natively (HKDF-SHA256, then XChaCha20-Poly1305), and there is nothing to remember. Needs iOS 18 or Android 9, and a passwords app with the PRF extension.`
+                : 'Build with RECOVERY_PASSKEY_DOMAIN set to a domain associated with this app to back up under a passkey.'
+            }
+          >
+            <Island>
+              <Button
+                disabled={busy || !passkeys}
+                label={`Back up to ${storeName} with a passkey`}
+                onPress={backUpWithPasskey}
+                testID="recovery-backup-passkey"
+                variant="secondary"
+              />
+            </Island>
+          </Section>
+
           <Island>
             <Button label="Remove from this device" onPress={lose} testID="recovery-lose" variant="destructive" />
           </Island>
         </>
       ) : (
         <>
-          {saved ? (
+          {saved && savedKind === 'passkey' ? (
+            <Section
+              caption="Opened natively with the passkey you pick from the system's sheet, straight into this phone's hardware."
+              title="Restore"
+            >
+              <Island>
+                <Button
+                  disabled={busy || !passkeys}
+                  label={`Restore from ${storeName} with the passkey`}
+                  onPress={() => restoreWithPasskey(saved)}
+                  testID="recovery-restore-passkey"
+                />
+              </Island>
+            </Section>
+          ) : null}
+          {saved && savedKind !== 'passkey' ? (
             <Section caption="Opened natively with the password, straight into this phone's hardware." title="Restore">
               <Island>
                 <VStack spacing="s12" wide>

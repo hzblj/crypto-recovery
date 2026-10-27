@@ -4,14 +4,17 @@ import path from 'node:path'
 import {describe, test} from 'node:test'
 
 import {isRecoveryError, RecoveryError} from '../src/errors'
-import {createRecoveryOn, isSealedBackup} from '../src/recovery'
+import {backupKind, createRecoveryOn, isSealedBackup} from '../src/recovery'
 import type {CryptoRecovery, Reach} from '../src/specs/crypto-recovery.nitro'
 import {VERSION} from '../src/version'
 
-/** Bytes shaped like a sealed backup of 12 words: the format's magic, then whatever (the store never opens it). */
-const sealed = (length = 87) => {
+/**
+ * Bytes shaped like a sealed backup of 12 words: the format's magic, version 1, the key derivation (1 a password, 2 a
+ * passkey), then whatever (the store never opens it).
+ */
+const sealed = (length = 87, kdf = 1) => {
   const bytes = globalThis.crypto.getRandomValues(new Uint8Array(length))
-  bytes.set([0x6e, 0x63, 0x62, 0x6b, 1])
+  bytes.set([0x6e, 0x63, 0x62, 0x6b, 1, kdf])
   return bytes
 }
 
@@ -96,7 +99,7 @@ describe('the recovery store', () => {
     const words = new TextEncoder().encode('abandon abandon abandon abandon abandon abandon abandon abandon about')
     await rejectsCode(() => recovery.save('main', words), 'NOT_A_BACKUP')
     await rejectsCode(() => recovery.save('main', new Uint8Array(16)), 'NOT_A_BACKUP')
-    await rejectsCode(() => recovery.save('main', sealed(86)), 'NOT_A_BACKUP')
+    await rejectsCode(() => recovery.save('main', sealed(77, 2)), 'NOT_A_BACKUP')
     await rejectsCode(() => recovery.save('main', sealed(1025)), 'NOT_A_BACKUP')
     await rejectsCode(() => recovery.save('main', 'backup' as never), 'NOT_A_BACKUP')
     assert.equal(entries.size, 0)
@@ -104,6 +107,38 @@ describe('the recovery store', () => {
     assert.equal(isSealedBackup(sealed()), true)
     assert.equal(isSealedBackup(sealed(1024)), true)
     assert.equal(isSealedBackup(words), false)
+  })
+
+  test('keeps backups sealed under a passkey, the shortest there are', async () => {
+    const {entries, host} = fakeHost()
+    const recovery = createRecoveryOn(host)
+
+    // A passkey's: a 46-byte header, 16 to 32 bytes of entropy, the tag.
+    for (const length of [78, 94]) {
+      const backup = sealed(length, 2)
+      assert.equal(isSealedBackup(backup), true)
+      await recovery.save(`passkey-${length}`, backup)
+      assert.deepEqual(await recovery.load(`passkey-${length}`), backup)
+    }
+    assert.equal(entries.size, 2)
+  })
+
+  test("reads what opens a backup from its header, and nothing it doesn't know", () => {
+    assert.equal(backupKind(sealed(87, 1)), 'password')
+    assert.equal(backupKind(sealed(103, 1)), 'password')
+    assert.equal(backupKind(sealed(78, 2)), 'passkey')
+    assert.equal(backupKind(sealed(94, 2)), 'passkey')
+
+    // A length the kind cannot have, a key derivation or version not read here, or no backup at all.
+    assert.equal(backupKind(sealed(78, 1)), undefined)
+    assert.equal(backupKind(sealed(87, 2)), undefined)
+    assert.equal(backupKind(sealed(87, 3)), undefined)
+    const later = sealed(87, 1)
+    later[4] = 2
+    assert.equal(backupKind(later), undefined)
+    assert.equal(isSealedBackup(later), true)
+    assert.equal(backupKind(new Uint8Array(87)), undefined)
+    assert.equal(backupKind('backup'), undefined)
   })
 
   test('takes ids both stores take as they are', async () => {

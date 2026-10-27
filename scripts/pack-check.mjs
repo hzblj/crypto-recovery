@@ -97,6 +97,8 @@ for (const {directory, name} of packages) {
 }
 
 const consumer = `import {
+  type BackupKind,
+  backupKind,
   createRecovery,
   isRecoveryError,
   isSealedBackup,
@@ -115,14 +117,17 @@ export const recovered = async (backup: Uint8Array) => {
   }
   const ids: string[] = await recovery.list()
   const loaded: Uint8Array | undefined = await recovery.load('main')
+  const kind: BackupKind | undefined = loaded ? backupKind(loaded) : undefined
   await recovery.remove('main')
 
   // @ts-expect-error: a backup is bytes, never words
   await recovery.save('main', 'abandon abandon abandon')
   // @ts-expect-error: what comes back may be nothing
   const sure: Uint8Array = await recovery.load('main')
+  // @ts-expect-error: bytes that are no backup have no kind
+  const always: BackupKind = backupKind(backup)
 
-  return [store, reach, ids, loaded, sure, isRecoveryError(new RecoveryError('NOT_A_BACKUP'))]
+  return [store, reach, ids, loaded, kind, sure, always, isRecoveryError(new RecoveryError('NOT_A_BACKUP'))]
 }
 `
 
