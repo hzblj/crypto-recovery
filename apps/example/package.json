@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@expo/ui": "~57.0.26",
-    "@hzblj/crypto-ethereum": "^0.2.0",
+    "@hzblj/crypto-ethereum": "^0.3.0",
     "@hzblj/crypto-recovery": "workspace:*",
     "@hzblj/crypto-vault": "^0.3.0",
     "@hzblj/kara-ui": "^0.15.3",
