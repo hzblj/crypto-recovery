@@ -1,5 +1,11 @@
 # @hzblj/crypto-recovery
 
+## 0.2.0
+
+### Minor Changes
+
+- [#3](https://github.com/hzblj/crypto-recovery/pull/3) [`1983dd6`](https://github.com/hzblj/crypto-recovery/commit/1983dd633d89285917790662a1f0ec0b689e1943) Thanks [@hzblj](https://github.com/hzblj)! - Backups sealed under a passkey. `@hzblj/crypto-vault` 0.3.0 seals a wallet under a passkey's PRF output in 78 to 94 bytes, and `save` and `isSealedBackup` now take them: the shortest sealed backup is 78 bytes, not 87. `backupKind(bytes)` reads a backup's header and says what opens it, `'password'` or `'passkey'` (`undefined` for anything else), so an app asks for the right one on the next phone. Nothing is stored beside a backup: the vault finds the passkey without a credential id (ADR 0002).
+
 ## 0.1.1
 
 ### Patch Changes
