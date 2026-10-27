@@ -44,6 +44,8 @@ export const RecoveryScreen = () => {
   const engine = exampleEngine()
   const [version, setVersion] = useState(0)
   const [password, setPassword] = useState('')
+  // Kara's fields are uncontrolled: a new key mounts the password fields empty again.
+  const [passwordField, setPasswordField] = useState(0)
   const [address, setAddress] = useState<string | null>(null)
   const [saved, setSaved] = useState<Uint8Array | null | undefined>(undefined)
   const [reach, setReach] = useState<Reach | null>(null)
@@ -105,13 +107,24 @@ export const RecoveryScreen = () => {
       }
     })
 
+  // Once the password has done its work, it goes from the screen.
+  const forgetPassword = () => {
+    setPassword('')
+    setPasswordField(field => field + 1)
+  }
+
   const backUp = () =>
     run(async () => {
       const backup = await vault.backup(ENTRY, {password, prompt: 'Back up your wallet'})
       await recovery.save(ENTRY, backup)
+      forgetPassword()
     })
 
-  const restore = (backup: Uint8Array) => run(() => vault.restore(ENTRY, backup, {access: ACCESS, password}))
+  const restore = (backup: Uint8Array) =>
+    run(async () => {
+      await vault.restore(ENTRY, backup, {access: ACCESS, password})
+      forgetPassword()
+    })
 
   // As if the phone were lost: the wallet goes from this device, the backup stays in the store.
   const lose = () => {
@@ -175,7 +188,13 @@ export const RecoveryScreen = () => {
           >
             <Island>
               <VStack spacing="s12" wide>
-                <TextField label="Password" onChangeText={setPassword} secure testID="recovery-backup-password" />
+                <TextField
+                  key={passwordField}
+                  label="Password"
+                  onChangeText={setPassword}
+                  secure
+                  testID="recovery-backup-password"
+                />
                 <Button
                   disabled={busy || password.length === 0}
                   label={`Back up to ${storeName}`}
@@ -196,7 +215,13 @@ export const RecoveryScreen = () => {
             <Section caption="Opened natively with the password, straight into this phone's hardware." title="Restore">
               <Island>
                 <VStack spacing="s12" wide>
-                  <TextField label="Password" onChangeText={setPassword} secure testID="recovery-restore-password" />
+                  <TextField
+                    key={passwordField}
+                    label="Password"
+                    onChangeText={setPassword}
+                    secure
+                    testID="recovery-restore-password"
+                  />
                   <Button
                     disabled={busy || password.length === 0}
                     label={`Restore from ${storeName}`}
