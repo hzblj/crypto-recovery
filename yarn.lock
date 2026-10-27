@@ -1918,12 +1918,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hzblj/crypto-ethereum@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@hzblj/crypto-ethereum@npm:0.2.0"
+"@hzblj/crypto-ethereum@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@hzblj/crypto-ethereum@npm:0.3.0"
   peerDependencies:
-    "@hzblj/nitro-crypto": ^0.1.2
-  checksum: 10c0/15778fc2a675461d48116c0a3ecaf10379c7166f370bc20c0a81ebe80d5a790fe20947537ebf5bafce29f863f1048c190dd832c234684993876bacc30715f773
+    "@hzblj/nitro-crypto": ^0.1.5
+    viem: ^2.26.0
+  peerDependenciesMeta:
+    viem:
+      optional: true
+  checksum: 10c0/351561834ba03d5fc195ce994afebb070b688091a2a4b27a90348ed86a7de2923f07826077fc05ca5830247e35317f813825da30d4879a19bbe67277e3caf368
   languageName: node
   linkType: hard
 
@@ -1946,15 +1950,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hzblj/crypto-vault@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@hzblj/crypto-vault@npm:0.2.0"
+"@hzblj/crypto-vault@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@hzblj/crypto-vault@npm:0.3.0"
   peerDependencies:
-    "@hzblj/nitro-crypto": ^0.1.4
+    "@hzblj/nitro-crypto": ^0.1.5
     react: "*"
     react-native: "*"
     react-native-nitro-modules: ^0.37.1
-  checksum: 10c0/dd8b2e8a6d374b8bc5d81b68917b560897484be98885867bd5c603d79ccf4cab2b47a6aca9823bfeb14f1630987351837a78180f2f762e9aaaf7fbbd1fc5e879
+  checksum: 10c0/c8dc7c6f04c2e6e4036f3bb199df60cd6e9f7cd778d785d6862cf6ce9055b894bce0946ba27bc62cccfa92b7e9ec4968192c39be677666a388e206f59021fdfb
   languageName: node
   linkType: hard
 
@@ -2119,14 +2123,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hzblj/nitro-crypto@npm:^0.1.4":
-  version: 0.1.4
-  resolution: "@hzblj/nitro-crypto@npm:0.1.4"
+"@hzblj/nitro-crypto@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "@hzblj/nitro-crypto@npm:0.1.5"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: ^0.37.1
-  checksum: 10c0/85b60460ad8bd7efb4d32c233fc2b55aec404144150f505137103a3760e3cb5030e7a26506047eae3843b9635674eee295e9dcb8ec9ccbd0dd882cafd7a9b288
+  checksum: 10c0/24c768fb4ff7284ee1e0bd9a976b5907225fe90a894c3b1ff5946a26c441a54421d7f6463d161f42fc635aa40935ecc79712741208d199d56083dd47516f2576
   languageName: node
   linkType: hard
 
@@ -3925,11 +3929,11 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.29.7"
     "@expo/ui": "npm:~57.0.26"
-    "@hzblj/crypto-ethereum": "npm:^0.2.0"
+    "@hzblj/crypto-ethereum": "npm:^0.3.0"
     "@hzblj/crypto-recovery": "workspace:*"
-    "@hzblj/crypto-vault": "npm:^0.2.0"
+    "@hzblj/crypto-vault": "npm:^0.3.0"
     "@hzblj/kara-ui": "npm:^0.15.3"
-    "@hzblj/nitro-crypto": "npm:^0.1.4"
+    "@hzblj/nitro-crypto": "npm:^0.1.5"
     "@lodev09/react-native-true-sheet": "npm:3.11.18"
     "@types/node": "npm:^22.19.0"
     "@types/react": "npm:~19.2.14"

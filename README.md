@@ -4,9 +4,9 @@
 [![license](https://img.shields.io/npm/l/@hzblj/crypto-recovery.svg)](./LICENSE)
 
 A wallet's sealed backup kept in iCloud Keychain or Android's Block Store, for React Native and Expo. The
-[`@hzblj/crypto-vault`](https://github.com/hzblj/crypto-vault) seals the wallet under a password with the
+[`@hzblj/crypto-vault`](https://github.com/hzblj/crypto-vault) seals the wallet under a password or a passkey with the
 [`@hzblj/nitro-crypto`](https://github.com/hzblj/nitro-crypto) engine; this package keeps the sealed bytes where the
-next phone finds them. The store sees ciphertext, never a password or a secret.
+next phone finds them. The store sees ciphertext, never a password, a passkey's output or a secret.
 
 <p>
   <img alt="The example on iOS: the wallet's sealed backup in iCloud Keychain, 87 bytes, and the wallet unlocked to its address" height="560" src="media/ios-recovery.png" />
@@ -30,10 +30,14 @@ const saved = await recovery.load('main')
 if (saved) {
   await vault.restore('main', saved, {password}) // straight into this phone's hardware
 }
+
+// or under a passkey, with nothing to remember: backupKind(saved) says which to ask for
+await recovery.save('main', await vault.backup('main', {passkey: {name: 'Main wallet'}, prompt: 'Back up'}))
+await vault.restore('main', saved, {passkey: true})
 ```
 
-**[Documentation](./packages/crypto-recovery/README.md)**: install, the API, where a backup goes on each platform, and
-what is not in this version.
+**[Documentation](./packages/crypto-recovery/README.md)**: install, the API, backups under a password or a passkey,
+where a backup goes on each platform, and what is not in this version.
 
 | | iOS | Android |
 | --- | --- | --- |
@@ -47,7 +51,7 @@ what is not in this version.
 | Path | What lives there |
 | --- | --- |
 | `packages/crypto-recovery/` | `@hzblj/crypto-recovery`: the spec, the Swift and Kotlin halves, the facade |
-| `apps/example/` | The example: a wallet in the vault, backed up into the store, removed, restored from the store |
+| `apps/example/` | The example: a wallet in the vault, backed up under a password or a passkey into the store, removed, restored from the store |
 | `scripts/` | The pack check, version sync |
 | `docs/` | [Decisions](./docs/adr) |
 
