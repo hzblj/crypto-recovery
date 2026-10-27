@@ -11,7 +11,6 @@ password, never a secret, and nothing that is not a sealed backup.
 
 <p>
   <img alt="The example on iOS: the wallet's sealed backup in iCloud Keychain, 87 bytes, and the wallet unlocked to its address" height="560" src="https://raw.githubusercontent.com/hzblj/crypto-recovery/main/media/ios-recovery.png" />
-  <img alt="After the phone is lost: the backup still in iCloud Keychain, restored with the password straight into this phone's hardware" height="560" src="https://raw.githubusercontent.com/hzblj/crypto-recovery/main/media/ios-restore.png" />
   <img alt="The same on the Android emulator: the 87-byte backup in Block Store, which a phone set up from this one restores" height="560" src="https://raw.githubusercontent.com/hzblj/crypto-recovery/main/media/android-recovery.png" />
 </p>
 
